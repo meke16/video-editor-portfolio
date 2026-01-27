@@ -192,3 +192,231 @@ textarea:focus {
     margin-top: 30px;
   }
 }
+
+/* 2. Particles Background */
+.particles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  /* Behind content */
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  background: rgba(229, 9, 20, 0.4);
+  /* Red tint */
+  border-radius: 50%;
+  animation: floatParticle linear infinite;
+  box-shadow: 0 0 10px rgba(229, 9, 20, 0.6);
+}
+
+@keyframes floatParticle {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.2;
+  }
+
+  50% {
+    transform: translateY(-50px) translateX(20px) scale(1.2);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translateY(-100px) translateX(-20px) scale(1);
+    opacity: 0.2;
+  }
+}
+
+/* 3. Image Wrapper for Orbital Effects */
+.hero-img-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+/* Rotating Ring */
+.orbit-ring {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  animation: spinSlow 20s linear infinite;
+  pointer-events: none;
+
+  /* Bubbles Base */
+  .orbit-bubble {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px currentColor;
+    margin-top: -4px;
+    /* Center alignment */
+    margin-left: -4px;
+  }
+
+  /* Specific Bubble Configs (Angle & Color) */
+  .bubble-1 {
+    color: #e50914;
+    --angle: 0deg;
+    animation: shootOrbit 8s ease-in-out infinite;
+  }
+
+  .bubble-2 {
+    color: #00f2ea;
+    --angle: 60deg;
+    animation: shootOrbit 8s ease-in-out infinite 2s;
+  }
+
+  .bubble-3 {
+    color: #ff00ff;
+    --angle: 120deg;
+    animation: shootOrbit 8s ease-in-out infinite 4s;
+  }
+
+  .bubble-4 {
+    color: #ffff00;
+    --angle: 180deg;
+    animation: shootOrbit 8s ease-in-out infinite 1s;
+  }
+
+  .bubble-5 {
+    color: #00ff00;
+    --angle: 240deg;
+    animation: shootOrbit 8s ease-in-out infinite 3s;
+  }
+
+  .bubble-6 {
+    color: #ff7700;
+    --angle: 300deg;
+    animation: shootOrbit 8s ease-in-out infinite 5s;
+  }
+
+  /* Set background to current color */
+  .orbit-bubble {
+    background-color: currentColor;
+  }
+
+  /* Shooting Star Animation 
+   Uses CSS var(--angle) to maintain heading while changing distance (translateX)
+   Distance 350px+ = "Static Star" (Outer)
+   Distance 250px = "Orbit" (On Border)
+*/
+  @keyframes shootOrbit {
+    0% {
+      transform: rotate(var(--angle)) translateX(400px) scale(0.8);
+      opacity: 0.7;
+    }
+
+    10% {
+      transform: rotate(var(--angle)) translateX(400px) scale(0.8);
+      opacity: 0.7;
+    }
+
+    /* Stay Static */
+
+    /* SHOOT! */
+    20% {
+      transform: rotate(var(--angle)) translateX(250px) scale(1.2);
+      opacity: 1;
+      box-shadow: 0 0 20px currentColor;
+    }
+
+    /* ORBIT (The ring rotates, so staying at 250px means orbiting) */
+    60% {
+      transform: rotate(var(--angle)) translateX(250px) scale(1);
+      opacity: 1;
+    }
+
+    /* RETURN */
+    70% {
+      transform: rotate(var(--angle)) translateX(400px) scale(0.8);
+      opacity: 0.7;
+    }
+
+    100% {
+      transform: rotate(var(--angle)) translateX(400px) scale(0.8);
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes spinSlow {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .orbit-ring {
+      width: 360px;
+      height: 360px;
+    }
+
+    /* Adjust distances for mobile */
+    @keyframes shootOrbit {
+      0% {
+        transform: rotate(var(--angle)) translateX(280px) scale(0.8);
+        opacity: 0.7;
+      }
+
+      10% {
+        transform: rotate(var(--angle)) translateX(280px) scale(0.8);
+        opacity: 0.7;
+      }
+
+      20% {
+        transform: rotate(var(--angle)) translateX(180px) scale(1.2);
+        opacity: 1;
+      }
+
+      /* 180px = 360/2 */
+      60% {
+        transform: rotate(var(--angle)) translateX(180px) scale(1);
+        opacity: 1;
+      }
+
+      70% {
+        transform: rotate(var(--angle)) translateX(280px) scale(0.8);
+        opacity: 0.7;
+      }
+
+      100% {
+        transform: rotate(var(--angle)) translateX(280px) scale(0.8);
+        opacity: 0.7;
+      }
+    }
+  }
+
+
+
+  @keyframes spinSlow {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+
+  @media (max-width: 900px) {
+    .orbit-ring {
+      width: 360px;
+      height: 360px;
+    }
+  }

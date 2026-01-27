@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Play } from 'lucide-react';
+import FloatingParticles from '../components/FloatingParticles';
 
 const Home = () => {
     const [featuredVideos, setFeaturedVideos] = useState([]);
@@ -43,13 +44,16 @@ const Home = () => {
         <div className="home-page">
             {/* Hero Section */}
             <section className="hero" style={{
-                minHeight: '80vh',
+                minHeight: '85vh',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 padding: '80px 20px',
                 background: 'linear-gradient(135deg, #050505 0%, #1a1a1a 100%)',
+                position: 'relative',
+                overflow: 'hidden'
             }}>
+                <FloatingParticles />
                 <div className="container" style={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -63,7 +67,7 @@ const Home = () => {
                     {/* Left: Content */}
                     <div style={{ flex: '1 1 500px', animation: 'fadeIn 1s ease-out', textAlign: 'left' }}>
                         <p style={{ fontSize: '1.5rem', color: 'var(--accent-red)', marginBottom: '15px', fontWeight: 'bold' }}>Hey, I'm Firaol</p>
-                        <h1 style={{ fontSize: '4rem', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '2px', lineHeight: '1.1' }}>
+                        <h1 className="hero-text-animated" style={{ fontSize: '4rem', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '2px', lineHeight: '1.1' }}>
                             {heroData?.title || 'Video Editor'}
                         </h1>
                         <p style={{ fontSize: '1.3rem', color: '#ccc', marginBottom: '30px', fontWeight: '300', maxWidth: '600px' }}>
@@ -102,12 +106,22 @@ const Home = () => {
 
                     {/* Right: Image */}
                     <div style={{ flex: '1 1 400px', display: 'flex', justifyContent: 'center', animation: 'fadeIn 1.5s ease-out' }}>
-                        <div className="hero-profile-img">
-                            <img
-                                src={heroData?.imageUrl || 'https://via.placeholder.com/500'}
-                                alt="Firaol"
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
+                        <div className="hero-img-wrapper">
+                            <div className="orbit-ring">
+                                <div className="orbit-bubble bubble-1"></div>
+                                <div className="orbit-bubble bubble-2"></div>
+                                <div className="orbit-bubble bubble-3"></div>
+                                <div className="orbit-bubble bubble-4"></div>
+                                <div className="orbit-bubble bubble-5"></div>
+                                <div className="orbit-bubble bubble-6"></div>
+                            </div>
+                            <div className="hero-profile-img" style={{ position: 'relative', zIndex: 2 }}>
+                                <img
+                                    src={heroData?.imageUrl || 'https://via.placeholder.com/500'}
+                                    alt="Firaol"
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            </div>
                         </div>
                     </div>
 
