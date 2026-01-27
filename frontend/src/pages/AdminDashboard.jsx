@@ -240,7 +240,7 @@ const AdminDashboard = () => {
                                     <label style={{ display: 'block', marginBottom: '5px', color: '#888' }}>Subtitle</label>
                                     <input value={heroData.subtitle} onChange={e => setHeroData({ ...heroData, subtitle: e.target.value })} placeholder="e.g. Specializing in..." />
 
-                                    <label style={{ display: 'block', marginBottom: '5px', color: '#888' }}>Background Image URL</label>
+                                    <label style={{ display: 'block', marginBottom: '5px', color: '#888' }}>Hero Image / Profile Photo URL</label>
                                     <input value={heroData.imageUrl} onChange={e => setHeroData({ ...heroData, imageUrl: e.target.value })} placeholder="https://..." />
 
                                     <button className="btn btn-primary">Update Hero</button>

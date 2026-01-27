@@ -43,56 +43,74 @@ const Home = () => {
         <div className="home-page">
             {/* Hero Section */}
             <section className="hero" style={{
-                height: '85vh',
+                minHeight: '80vh',
                 display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
                 alignItems: 'center',
-                textAlign: 'center',
-                background: heroData?.imageUrl
-                    ? `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url("${heroData.imageUrl}")`
-                    : 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), #121212',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                padding: '20px'
+                justifyContent: 'center',
+                padding: '80px 20px',
+                background: 'linear-gradient(135deg, #050505 0%, #1a1a1a 100%)',
             }}>
-                <div className="container" style={{ maxWidth: '800px', animation: 'fadeIn 1s ease-out' }}>
-                    <p style={{ fontSize: '1.5rem', color: 'var(--accent-red)', marginBottom: '10px', fontWeight: 'bold' }}>Hey, I'm Firaol</p>
-                    <h1 style={{ fontSize: '3.5rem', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '2px', lineHeight: '1.2' }}>
-                        {heroData?.title || 'Video Editor'}
-                    </h1>
-                    <p style={{ fontSize: '1.4rem', color: '#ccc', margin: '0 auto 30px', fontWeight: '300' }}>
-                        {heroData?.subtitle || 'Create. Edit. Inspire.'}
-                    </p>
+                <div className="container" style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '50px',
+                    width: '100%',
+                    flexWrap: 'wrap'
+                }}>
 
-                    {/* Social Links */}
-                    <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '35px', flexWrap: 'wrap' }}>
-                        {socials.map(social => (
-                            <a
-                                key={social.id}
-                                href={social.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="btn"
-                                style={{
-                                    padding: '10px 20px',
-                                    fontSize: '0.9rem',
-                                    borderColor: '#333',
-                                    color: '#fff',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '8px'
-                                }}
-                            >
-                                {social.platform}
-                            </a>
-                        ))}
+                    {/* Left: Content */}
+                    <div style={{ flex: '1 1 500px', animation: 'fadeIn 1s ease-out', textAlign: 'left' }}>
+                        <p style={{ fontSize: '1.5rem', color: 'var(--accent-red)', marginBottom: '15px', fontWeight: 'bold' }}>Hey, I'm Firaol</p>
+                        <h1 style={{ fontSize: '4rem', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '2px', lineHeight: '1.1' }}>
+                            {heroData?.title || 'Video Editor'}
+                        </h1>
+                        <p style={{ fontSize: '1.3rem', color: '#ccc', marginBottom: '30px', fontWeight: '300', maxWidth: '600px' }}>
+                            {heroData?.subtitle || 'Create. Edit. Inspire.'}
+                        </p>
+
+                        {/* Social Links */}
+                        <div style={{ display: 'flex', gap: '15px', marginBottom: '40px', flexWrap: 'wrap' }}>
+                            {socials.map(social => (
+                                <a
+                                    key={social.id}
+                                    href={social.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="btn"
+                                    style={{
+                                        padding: '10px 20px',
+                                        fontSize: '0.9rem',
+                                        borderColor: '#333',
+                                        color: '#fff',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px'
+                                    }}
+                                >
+                                    {social.platform}
+                                </a>
+                            ))}
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '20px' }}>
+                            <Link to="/portfolio" className="btn btn-primary">View My Work</Link>
+                            <Link to="/contact" className="btn">Contact Me</Link>
+                        </div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
-                        <Link to="/portfolio" className="btn btn-primary">View My Work</Link>
-                        <Link to="/contact" className="btn">Contact Me</Link>
+                    {/* Right: Image */}
+                    <div style={{ flex: '1 1 400px', display: 'flex', justifyContent: 'center', animation: 'fadeIn 1.5s ease-out' }}>
+                        <div className="hero-profile-img">
+                            <img
+                                src={heroData?.imageUrl || 'https://via.placeholder.com/500'}
+                                alt="Firaol"
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                        </div>
                     </div>
+
                 </div>
             </section>
 
@@ -101,8 +119,8 @@ const Home = () => {
                 <h2 className="text-center" style={{ marginBottom: '50px', fontSize: '2.5rem' }}>Featured <span className="text-accent">Edits</span></h2>
                 <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
                     {featuredVideos.map(video => (
-                        <div key={video.id} className="video-card" style={{ background: '#121212', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', transition: 'transform 0.3s' }}>
-                            <div style={{ position: 'relative', paddingTop: '56.25%' }}>
+                        <div key={video.id} className="video-card" style={{ background: '#121212', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{ position: 'relative', paddingTop: '56.25%', borderBottom: '2px solid var(--accent-red)' }}>
                                 <iframe
                                     src={getEmbedUrl(video.youtubeUrl)}
                                     title={video.title}

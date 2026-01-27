@@ -5,7 +5,8 @@
   --card-bg: #121212;
   --text-primary: #ffffff;
   --text-secondary: #aaaaaa;
-  --accent-red: #e50914; /* Netflix-like red */
+  --accent-red: #e50914;
+  /* Netflix-like red */
   --accent-hover: #b20710;
   --nav-bg: rgba(0, 0, 0, 0.9);
 }
@@ -24,7 +25,12 @@ body {
   line-height: 1.6;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Oswald', sans-serif;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -43,8 +49,13 @@ a {
 }
 
 /* Typography Utilities */
-.text-accent { color: var(--accent-red); }
-.text-center { text-align: center; }
+.text-accent {
+  color: var(--accent-red);
+}
+
+.text-center {
+  text-align: center;
+}
 
 /* Buttons */
 .btn {
@@ -82,7 +93,9 @@ a {
 }
 
 /* Forms */
-input, textarea, select {
+input,
+textarea,
+select {
   width: 100%;
   padding: 12px;
   margin-bottom: 20px;
@@ -93,20 +106,89 @@ input, textarea, select {
   outline: none;
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
   border-color: var(--accent-red);
 }
 
+/* ... existing styles ... */
+
+/* Enhanced Cinematic Styles */
+:root {
+  --bg-color: #050505;
+  --card-bg: #121212;
+  --text-primary: #ffffff;
+  --text-secondary: #aaaaaa;
+  --accent-red: #e50914;
+  --accent-hover: #b20710;
+  --nav-bg: rgba(0, 0, 0, 0.95);
+  --border-thick: 3px solid var(--accent-red);
+  /* New variable */
+}
+
+/* Enhancing Video Cards and Containers */
+.video-card {
+  border: 1px solid #333;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.video-card:hover {
+  transform: translateY(-5px);
+  border: var(--border-thick);
+  box-shadow: 0 0 20px rgba(229, 9, 20, 0.4);
+  /* Red glow */
+}
+
+/* Hero enhancements */
+.hero h1 {
+  text-shadow: 2px 2px 0px var(--accent-red);
+  /* Edgy text shadow */
+}
+
+.section {
+  position: relative;
+  border-left: 1px solid rgba(229, 9, 20, 0.1);
+  /* Subtle guide line */
+}
+
+/* Button Refinements */
+.btn {
+  border: 2px solid var(--accent-red);
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
 /* Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: black;
-}
 ::-webkit-scrollbar-thumb {
-  background: #333;
-}
-::-webkit-scrollbar-thumb:hover {
   background: var(--accent-red);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+  border-left: 1px solid #333;
+}
+
+/* Hero Profile Image */
+.hero-profile-img {
+  width: 450px;
+  height: 450px;
+  min-width: 300px;
+  /* Prevent it from becoming too small */
+  border-radius: 50%;
+  border: 4px solid var(--accent-red);
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(229, 9, 20, 0.3);
+  flex-shrink: 0;
+  position: relative;
+  background: #000;
+}
+
+@media (max-width: 900px) {
+  .hero-profile-img {
+    width: 320px;
+    height: 320px;
+    margin-top: 30px;
+  }
 }
