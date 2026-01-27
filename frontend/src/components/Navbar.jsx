@@ -19,7 +19,7 @@ const Navbar = () => {
             <div className="container nav-container">
                 <Link to="/" className="logo">
                     <Video className="logo-icon" size={28} />
-                    <span>CINEMA<span className="text-accent">DIT</span></span>
+                    <span>FIRA <span className="text-green">'</span> <span className="text-accent">OL</span></span>
                 </Link>
 
                 <div className="menu-icon" onClick={toggleMenu}>
