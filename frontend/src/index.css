@@ -183,6 +183,18 @@ textarea:focus {
   flex-shrink: 0;
   position: relative;
   background: #000;
+  /* Counter-rotate the image for a planetary gear effect */
+  animation: spinReverse 60s linear infinite;
+}
+
+@keyframes spinReverse {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
 }
 
 @media (max-width: 900px) {
@@ -208,27 +220,27 @@ textarea:focus {
 
 .particle {
   position: absolute;
-  background: rgba(229, 9, 20, 0.4);
-  /* Red tint */
   border-radius: 50%;
-  animation: floatParticle linear infinite;
-  box-shadow: 0 0 10px rgba(229, 9, 20, 0.6);
+  animation: twinkle linear infinite;
+  opacity: 0.8;
+  /* background & box-shadow set inline for colors */
 }
 
-@keyframes floatParticle {
+@keyframes twinkle {
   0% {
-    transform: translateY(0) translateX(0) scale(1);
-    opacity: 0.2;
+    transform: scale(1);
+    opacity: 0.4;
   }
 
   50% {
-    transform: translateY(-50px) translateX(20px) scale(1.2);
-    opacity: 0.6;
+    transform: scale(1.5);
+    opacity: 1;
+    /* Uses inline shadow */
   }
 
   100% {
-    transform: translateY(-100px) translateX(-20px) scale(1);
-    opacity: 0.2;
+    transform: scale(1);
+    opacity: 0.4;
   }
 }
 
@@ -400,23 +412,4 @@ textarea:focus {
       }
     }
   }
-
-
-
-  @keyframes spinSlow {
-    from {
-      transform: rotate(0deg);
-    }
-
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-
-  @media (max-width: 900px) {
-    .orbit-ring {
-      width: 360px;
-      height: 360px;
-    }
-  }
+}
