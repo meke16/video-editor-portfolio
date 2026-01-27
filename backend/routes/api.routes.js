@@ -133,4 +133,89 @@ router.post('/contact', async (req, res) => {
     }
 });
 
+// Admin: Get Messages
+router.get('/messages', async (req, res) => {
+    try {
+        const messages = await prisma.contactMessage.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(messages);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch messages' });
+    }
+});
+
+router.delete('/messages/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await prisma.contactMessage.delete({ where: { id: parseInt(id) } });
+        res.json({ message: 'Deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete message' });
+    }
+});
+
+// Hero Section
+router.get('/hero', async (req, res) => {
+    try {
+        const hero = await prisma.heroSection.findFirst();
+        res.json(hero || { title: 'Video Editor | YouTube Growth', subtitle: 'Specializing in high-retention editing', imageUrl: 'https://images.unsplash.com/photo-1574717432729-846c2415d9a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch hero section' });
+    }
+});
+
+router.post('/hero', async (req, res) => {
+    const { title, subtitle, imageUrl } = req.body;
+    try {
+        const first = await prisma.heroSection.findFirst();
+        if (first) {
+            const updated = await prisma.heroSection.update({
+                where: { id: first.id },
+                data: { title, subtitle, imageUrl }
+            });
+            res.json(updated);
+        } else {
+            const created = await prisma.heroSection.create({
+                data: { title, subtitle, imageUrl }
+            });
+            res.json(created);
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to update hero section' });
+    }
+});
+
+// Social Links
+router.get('/socials', async (req, res) => {
+    try {
+        const socials = await prisma.socialLink.findMany();
+        res.json(socials);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch social links' });
+    }
+});
+
+router.post('/socials', async (req, res) => {
+    const { platform, url } = req.body;
+    try {
+        const newSocial = await prisma.socialLink.create({
+            data: { platform, url }
+        });
+        res.json(newSocial);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to add social link' });
+    }
+});
+
+router.delete('/socials/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await prisma.socialLink.delete({ where: { id: parseInt(id) } });
+        res.json({ message: 'Deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete social link' });
+    }
+});
+
 module.exports = router;

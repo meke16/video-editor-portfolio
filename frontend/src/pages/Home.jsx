@@ -5,19 +5,26 @@ import { Play } from 'lucide-react';
 
 const Home = () => {
     const [featuredVideos, setFeaturedVideos] = useState([]);
+    const [heroData, setHeroData] = useState(null);
+    const [socials, setSocials] = useState([]);
 
     useEffect(() => {
-        // In a real app we would have an endpoint filter for featured
-        // For now, fetch all and filter
-        const fetchVideos = async () => {
+        const fetchData = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/portfolio');
-                setFeaturedVideos(res.data.filter(v => v.featured).slice(0, 3));
+                const [portfolioRes, heroRes, socialsRes] = await Promise.all([
+                    axios.get('http://localhost:5000/api/portfolio'),
+                    axios.get('http://localhost:5000/api/hero'),
+                    axios.get('http://localhost:5000/api/socials')
+                ]);
+
+                setFeaturedVideos(portfolioRes.data.filter(v => v.featured).slice(0, 3));
+                setHeroData(heroRes.data);
+                setSocials(socialsRes.data);
             } catch (err) {
-                console.error("Failed to fetch videos");
+                console.error("Failed to fetch home data", err);
             }
         };
-        fetchVideos();
+        fetchData();
     }, []);
     const getEmbedUrl = (url) => {
         if (!url) return '';
@@ -36,23 +43,52 @@ const Home = () => {
         <div className="home-page">
             {/* Hero Section */}
             <section className="hero" style={{
-                height: '80vh',
+                height: '85vh',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
-                background: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("https://images.unsplash.com/photo-1574717432729-846c2415d9a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80")',
+                background: heroData?.imageUrl
+                    ? `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url("${heroData.imageUrl}")`
+                    : 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), #121212',
                 backgroundSize: 'cover',
-                backgroundPosition: 'center'
+                backgroundPosition: 'center',
+                padding: '20px'
             }}>
-                <div className="container">
-                    <h1 style={{ fontSize: '3rem', marginBottom: '20px' }}>
-                        Video Editor <span className="text-accent">|</span> YouTube Growth
+                <div className="container" style={{ maxWidth: '800px', animation: 'fadeIn 1s ease-out' }}>
+                    <p style={{ fontSize: '1.5rem', color: 'var(--accent-red)', marginBottom: '10px', fontWeight: 'bold' }}>Hey, I'm Firaol</p>
+                    <h1 style={{ fontSize: '3.5rem', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '2px', lineHeight: '1.2' }}>
+                        {heroData?.title || 'Video Editor'}
                     </h1>
-                    <p style={{ fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto 30px', color: '#ddd' }}>
-                        Specializing in high-retention editing for Reaction Channels, Tutorials, and Short-Form content (Reels/Shorts).
+                    <p style={{ fontSize: '1.4rem', color: '#ccc', margin: '0 auto 30px', fontWeight: '300' }}>
+                        {heroData?.subtitle || 'Create. Edit. Inspire.'}
                     </p>
+
+                    {/* Social Links */}
+                    <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '35px', flexWrap: 'wrap' }}>
+                        {socials.map(social => (
+                            <a
+                                key={social.id}
+                                href={social.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="btn"
+                                style={{
+                                    padding: '10px 20px',
+                                    fontSize: '0.9rem',
+                                    borderColor: '#333',
+                                    color: '#fff',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                {social.platform}
+                            </a>
+                        ))}
+                    </div>
+
                     <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
                         <Link to="/portfolio" className="btn btn-primary">View My Work</Link>
                         <Link to="/contact" className="btn">Contact Me</Link>
@@ -62,10 +98,10 @@ const Home = () => {
 
             {/* Featured Work */}
             <section className="section container">
-                <h2 className="text-center" style={{ marginBottom: '40px' }}>Featured <span className="text-accent">Edits</span></h2>
-                <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
+                <h2 className="text-center" style={{ marginBottom: '50px', fontSize: '2.5rem' }}>Featured <span className="text-accent">Edits</span></h2>
+                <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
                     {featuredVideos.map(video => (
-                        <div key={video.id} className="video-card" style={{ background: '#121212', borderRadius: '10px', overflow: 'hidden' }}>
+                        <div key={video.id} className="video-card" style={{ background: '#121212', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', transition: 'transform 0.3s' }}>
                             <div style={{ position: 'relative', paddingTop: '56.25%' }}>
                                 <iframe
                                     src={getEmbedUrl(video.youtubeUrl)}
@@ -74,16 +110,16 @@ const Home = () => {
                                     allowFullScreen
                                 ></iframe>
                             </div>
-                            <div style={{ padding: '20px' }}>
-                                <h3>{video.title}</h3>
-                                <p style={{ color: '#aaa', fontSize: '0.9rem' }}>{video.description}</p>
+                            <div style={{ padding: '25px' }}>
+                                <h3 style={{ marginBottom: '10px', fontSize: '1.4rem' }}>{video.title}</h3>
+                                <p style={{ color: '#aaa', fontSize: '0.95rem', lineHeight: '1.5' }}>{video.description}</p>
                             </div>
                         </div>
                     ))}
                 </div>
-                {featuredVideos.length === 0 && <p className="text-center">No featured videos yet.</p>}
+                {featuredVideos.length === 0 && <p className="text-center" style={{ color: '#666' }}>No featured videos selected yet.</p>}
 
-                <div className="text-center" style={{ marginTop: '40px' }}>
+                <div className="text-center" style={{ marginTop: '60px' }}>
                     <Link to="/portfolio" className="btn">See All Projects</Link>
                 </div>
             </section>

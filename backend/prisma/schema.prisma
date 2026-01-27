@@ -28,6 +28,7 @@ model Service {
   description String
 }
 
+
 model AboutSection {
   id      Int    @id @default(autoincrement())
   content String
@@ -39,4 +40,17 @@ model ContactMessage {
   email     String
   message   String
   createdAt DateTime @default(now())
+}
+
+model HeroSection {
+  id       Int    @id @default(autoincrement())
+  title    String
+  subtitle String
+  imageUrl String
+}
+
+model SocialLink {
+  id       Int    @id @default(autoincrement())
+  platform String
+  url      String
 }
