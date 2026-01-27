@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&family=Roboto:wght@300;400;500&display=swap');
+
+:root {
+  --bg-color: #050505;
+  --card-bg: #121212;
+  --text-primary: #ffffff;
+  --text-secondary: #aaaaaa;
+  --accent-red: #e50914; /* Netflix-like red */
+  --accent-hover: #b20710;
+  --nav-bg: rgba(0, 0, 0, 0.9);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: 'Roboto', sans-serif;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: 0.3s;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Typography Utilities */
+.text-accent { color: var(--accent-red); }
+.text-center { text-align: center; }
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 12px 30px;
+  border: 2px solid var(--accent-red);
+  background: transparent;
+  color: var(--text-primary);
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: 0.3s;
+  text-transform: uppercase;
+}
+
+.btn:hover {
+  background: var(--accent-red);
+  color: white;
+}
+
+.btn-primary {
+  background: var(--accent-red);
+  border-color: var(--accent-red);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* Layout */
+.section {
+  padding: 80px 0;
+}
+
+/* Forms */
+input, textarea, select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  background: var(--card-bg);
+  border: 1px solid #333;
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  outline: none;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--accent-red);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: black;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-red);
+}
