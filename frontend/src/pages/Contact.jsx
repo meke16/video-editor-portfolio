@@ -9,11 +9,12 @@ const Contact = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const API_URL = import.meta.env.VITE_API_URL;
     const handleSubmit = async (e) => {
         e.preventDefault();
         setStatus('sending');
         try {
-            await axios.post('http://localhost:5000/api/contact', formData);
+            await axios.post(`${API_URL}/api/contact`, formData);
             setStatus('success');
             setFormData({ name: '', email: '', message: '' });
         } catch (err) {

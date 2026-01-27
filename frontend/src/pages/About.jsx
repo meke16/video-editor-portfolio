@@ -4,8 +4,9 @@ import axios from 'axios';
 const About = () => {
     const [content, setContent] = useState('');
 
+    const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
-        axios.get('http://localhost:5000/api/about')
+        axios.get(`${API_URL}/api/about`)
             .then(res => setContent(res.data.content))
             .catch(err => console.error(err));
     }, []);

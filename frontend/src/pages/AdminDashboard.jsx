@@ -17,6 +17,7 @@ const AdminDashboard = () => {
     const [newService, setNewService] = useState({ title: '', description: '' });
     const [newSocial, setNewSocial] = useState({ platform: '', url: '' });
 
+    const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
         fetchData();
     }, [activeTab]);
@@ -24,21 +25,21 @@ const AdminDashboard = () => {
     const fetchData = async () => {
         try {
             if (activeTab === 'portfolio') {
-                const res = await axios.get('http://localhost:5000/api/portfolio');
+                const res = await axios.get(`${API_URL}/api/portfolio`);
                 setItems(res.data);
             } else if (activeTab === 'services') {
-                const res = await axios.get('http://localhost:5000/api/services');
+                const res = await axios.get(`${API_URL}/api/services`);
                 setServices(res.data);
             } else if (activeTab === 'about') {
-                const res = await axios.get('http://localhost:5000/api/about');
+                const res = await axios.get(`${API_URL}/api/about`);
                 setAboutContent(res.data.content);
             } else if (activeTab === 'hero') {
-                const heroRes = await axios.get('http://localhost:5000/api/hero');
+                const heroRes = await axios.get(`${API_URL}/api/hero`);
                 setHeroData(heroRes.data);
-                const socialsRes = await axios.get('http://localhost:5000/api/socials');
+                const socialsRes = await axios.get(`${API_URL}/api/socials`);
                 setSocials(socialsRes.data);
             } else if (activeTab === 'messages') {
-                const res = await axios.get('http://localhost:5000/api/messages');
+                const res = await axios.get(`${API_URL}/api/messages`);
                 setMessages(res.data);
             }
         } catch (err) {
@@ -56,13 +57,13 @@ const AdminDashboard = () => {
     // Portfolio
     const addPortfolioItem = async (e) => {
         e.preventDefault();
-        await axios.post('http://localhost:5000/api/portfolio', newItem);
+        await axios.post(`${API_URL}/api/portfolio`, newItem);
         setNewItem({ title: '', description: '', youtubeUrl: '', featured: false });
         fetchData();
     };
     const deletePortfolioItem = async (id) => {
         if (window.confirm('Are you sure?')) {
-            await axios.delete(`http://localhost:5000/api/portfolio/${id}`);
+            await axios.delete(`${API_URL}/api/portfolio/${id}`);
             fetchData();
         }
     };
@@ -70,44 +71,44 @@ const AdminDashboard = () => {
     // Services
     const addService = async (e) => {
         e.preventDefault();
-        await axios.post('http://localhost:5000/api/services', newService);
+        await axios.post(`${API_URL}/api/services`, newService);
         setNewService({ title: '', description: '' });
         fetchData();
     };
     const deleteService = async (id) => {
         if (window.confirm('Are you sure?')) {
-            await axios.delete(`http://localhost:5000/api/services/${id}`);
+            await axios.delete(`${API_URL}/api/services/${id}`);
             fetchData();
         }
     };
 
     // About
     const updateAbout = async () => {
-        await axios.post('http://localhost:5000/api/about', { content: aboutContent });
+        await axios.post(`${API_URL}/api/about`, { content: aboutContent });
         alert('About section updated!');
     };
 
     // Hero & Socials
     const updateHero = async (e) => {
         e.preventDefault();
-        await axios.post('http://localhost:5000/api/hero', heroData);
+        await axios.post(`${API_URL}/api/hero`, heroData);
         alert('Hero section updated!');
     };
     const addSocial = async (e) => {
         e.preventDefault();
-        await axios.post('http://localhost:5000/api/socials', newSocial);
+        await axios.post(`${API_URL}/api/socials`, newSocial);
         setNewSocial({ platform: '', url: '' });
         fetchData();
     };
     const deleteSocial = async (id) => {
-        await axios.delete(`http://localhost:5000/api/socials/${id}`);
+        await axios.delete(`${API_URL}/api/socials/${id}`);
         fetchData();
     };
 
     // Messages
     const deleteMessage = async (id) => {
         if (window.confirm('Delete this message?')) {
-            await axios.delete(`http://localhost:5000/api/messages/${id}`);
+            await axios.delete(`${API_URL}/api/messages/${id}`);
             fetchData();
         }
     };

@@ -9,13 +9,14 @@ const Home = () => {
     const [heroData, setHeroData] = useState(null);
     const [socials, setSocials] = useState([]);
 
+    const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const [portfolioRes, heroRes, socialsRes] = await Promise.all([
-                    axios.get('http://localhost:5000/api/portfolio'),
-                    axios.get('http://localhost:5000/api/hero'),
-                    axios.get('http://localhost:5000/api/socials')
+                    axios.get(`${API_URL}/api/portfolio`),
+                    axios.get(`${API_URL}/api/hero`),
+                    axios.get(`${API_URL}/api/socials`)
                 ]);
 
                 setFeaturedVideos(portfolioRes.data.filter(v => v.featured).slice(0, 3));

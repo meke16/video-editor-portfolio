@@ -5,8 +5,9 @@ import { Film, Scissors, Zap } from 'lucide-react';
 const Services = () => {
     const [services, setServices] = useState([]);
 
+    const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
-        axios.get('http://localhost:5000/api/services')
+        axios.get(`${API_URL}/api/services`)
             .then(res => setServices(res.data))
             .catch(err => console.error(err));
     }, []);

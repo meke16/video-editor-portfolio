@@ -4,8 +4,9 @@ import axios from 'axios';
 const Portfolio = () => {
     const [videos, setVideos] = useState([]);
 
+    const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
-        axios.get('http://localhost:5000/api/portfolio')
+        axios.get(`${API_URL}/api/portfolio`)
             .then(res => setVideos(res.data))
             .catch(err => console.error(err));
     }, []);
