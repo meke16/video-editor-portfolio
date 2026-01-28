@@ -14,7 +14,7 @@ const Contact = () => {
         e.preventDefault();
         setStatus('sending');
         try {
-            await axios.post(`${API_URL}/api/contact`, formData);
+            await axios.post(`${API_URL}/contact`, formData);
             setStatus('success');
             setFormData({ name: '', email: '', message: '' });
         } catch (err) {

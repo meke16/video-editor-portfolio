@@ -6,7 +6,7 @@ const About = () => {
 
     const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
-        axios.get(`${API_URL}/api/about`)
+        axios.get(`${API_URL}/about`)
             .then(res => setContent(res.data.content))
             .catch(err => console.error(err));
     }, []);

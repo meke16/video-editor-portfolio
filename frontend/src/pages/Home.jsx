@@ -14,9 +14,9 @@ const Home = () => {
         const fetchData = async () => {
             try {
                 const [portfolioRes, heroRes, socialsRes] = await Promise.all([
-                    axios.get(`${API_URL}/api/portfolio`),
-                    axios.get(`${API_URL}/api/hero`),
-                    axios.get(`${API_URL}/api/socials`)
+                    axios.get(`${API_URL}/portfolio`),
+                    axios.get(`${API_URL}/hero`),
+                    axios.get(`${API_URL}/socials`)
                 ]);
 
                 setFeaturedVideos(portfolioRes.data.filter(v => v.featured).slice(0, 3));

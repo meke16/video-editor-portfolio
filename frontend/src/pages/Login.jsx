@@ -15,7 +15,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`${API_URL}/api/auth/login`, formData);
+            const res = await axios.post(`${API_URL}/login`, formData);
             if (res.data.message === 'Login successful') {
                 localStorage.setItem('isAdminLoggedIn', 'true');
                 navigate('/admin');

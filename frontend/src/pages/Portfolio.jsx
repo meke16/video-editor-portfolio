@@ -6,7 +6,7 @@ const Portfolio = () => {
 
     const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
-        axios.get(`${API_URL}/api/portfolio`)
+        axios.get(`${API_URL}/portfolio`)
             .then(res => setVideos(res.data))
             .catch(err => console.error(err));
     }, []);

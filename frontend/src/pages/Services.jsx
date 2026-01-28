@@ -7,7 +7,7 @@ const Services = () => {
 
     const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
-        axios.get(`${API_URL}/api/services`)
+        axios.get(`${API_URL}/services`)
             .then(res => setServices(res.data))
             .catch(err => console.error(err));
     }, []);
