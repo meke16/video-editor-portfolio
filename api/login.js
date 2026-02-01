@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
     req.on('end', async () => {
       try {
         const { email, password } = JSON.parse(body);
-        const result = await client.query('SELECT * FROM "adminUser" WHERE email = $1', [email]);
+        const result = await client.query('SELECT * FROM "AdminUser" WHERE email = $1', [email]);
         const user = result.rows[0];
         if (!user || user.password !== password) {
           res.status(401).json({ error: 'Invalid credentials' });
