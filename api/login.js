@@ -1,6 +1,5 @@
-// Vercel serverless function for /api/login
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+// Vercel serverless function for /api/login using vanilla Node.js and PostgreSQL
+const client = require('./db');
 
 module.exports = async (req, res) => {
   if (req.method === 'POST') {
@@ -9,7 +8,8 @@ module.exports = async (req, res) => {
     req.on('end', async () => {
       try {
         const { email, password } = JSON.parse(body);
-        const user = await prisma.adminUser.findUnique({ where: { email } });
+        const result = await client.query('SELECT * FROM "adminUser" WHERE email = $1', [email]);
+        const user = result.rows[0];
         if (!user || user.password !== password) {
           res.status(401).json({ error: 'Invalid credentials' });
         } else {
