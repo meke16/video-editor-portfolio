@@ -20,7 +20,7 @@ import {
   orderBy,
   onSnapshot
 } from "firebase/firestore";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore } from "firebase/firestore"; // [ADD]
 
 
 // Your web app's Firebase configuration
@@ -45,8 +45,10 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 console.log("Connecting to Firebase Project:", import.meta.env.VITE_FIREBASE_PROJECT_ID);
-const db = getFirestore(app);
 
+const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+});
 const registerWithEmail = (email, password) =>
   createUserWithEmailAndPassword(auth, email, password);
 
