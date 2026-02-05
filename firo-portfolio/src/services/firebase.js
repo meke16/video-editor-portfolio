@@ -23,32 +23,29 @@ import {
 import { initializeFirestore } from "firebase/firestore"; // [ADD]
 
 
-// Your web app's Firebase configuration
-const env = import.meta.env;
-
 const firebaseConfig = {
-  apiKey: env.VITE_FIREBASE_API_KEY,
-  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: env.VITE_FIREBASE_APP_ID
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Add a check to help you debug in the browser console
-if (!firebaseConfig.apiKey) {
-  console.error("Firebase API Key is missing! Check your Vercel Environment Variables.");
-}
-
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-console.log("Connecting to Firebase Project:", import.meta.env.VITE_FIREBASE_PROJECT_ID);
-
+// THIS IS THE FIX:
+// We replace 'const db = getFirestore(app)' with this:
 const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
+  useFetchStreams: false,
 });
+
+
+console.log("Connecting to Firebase Project:", import.meta.env.VITE_FIREBASE_PROJECT_ID);
+
+
 const registerWithEmail = (email, password) =>
   createUserWithEmailAndPassword(auth, email, password);
 
