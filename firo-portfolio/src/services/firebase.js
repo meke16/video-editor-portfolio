@@ -44,6 +44,7 @@ if (!firebaseConfig.apiKey) {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+console.log("Connecting to Firebase Project:", import.meta.env.VITE_FIREBASE_PROJECT_ID);
 const db = getFirestore(app);
 
 const registerWithEmail = (email, password) =>
