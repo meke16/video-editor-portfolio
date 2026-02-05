@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
     getPortfolioItems,
     addPortfolioItem as createPortfolioItem,
@@ -19,6 +19,23 @@ import {
 } from '../services/firebase';
 import { useNavigate } from 'react-router-dom';
 
+const SidebarItem = ({ id, label, activeTab, onSelect }) => (
+    <div
+        onClick={() => onSelect(id)}
+        style={{
+            padding: '15px 20px',
+            cursor: 'pointer',
+            background: activeTab === id ? 'var(--accent-red)' : 'transparent',
+            color: 'white',
+            fontWeight: activeTab === id ? 'bold' : 'normal',
+            borderLeft: activeTab === id ? '4px solid white' : '4px solid transparent',
+            transition: '0.2s'
+        }}
+    >
+        {label}
+    </div>
+);
+
 const AdminDashboard = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('portfolio');
@@ -34,11 +51,7 @@ const AdminDashboard = () => {
     const [newService, setNewService] = useState({ title: '', description: '' });
     const [newSocial, setNewSocial] = useState({ platform: '', url: '' });
 
-    useEffect(() => {
-        fetchData();
-    }, [activeTab]);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             if (activeTab === 'portfolio') {
                 const data = await getPortfolioItems();
@@ -61,7 +74,15 @@ const AdminDashboard = () => {
         } catch (err) {
             console.error(err);
         }
-    };
+    }, [activeTab]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchData();
+        }, 0);
+
+        return () => clearTimeout(timer);
+    }, [fetchData]);
 
     const handleLogout = async () => {
         await firebaseLogout();
@@ -139,23 +160,6 @@ const AdminDashboard = () => {
     };
 
 
-    const SidebarItem = ({ id, label }) => (
-        <div
-            onClick={() => setActiveTab(id)}
-            style={{
-                padding: '15px 20px',
-                cursor: 'pointer',
-                background: activeTab === id ? 'var(--accent-red)' : 'transparent',
-                color: 'white',
-                fontWeight: activeTab === id ? 'bold' : 'normal',
-                borderLeft: activeTab === id ? '4px solid white' : '4px solid transparent',
-                transition: '0.2s'
-            }}
-        >
-            {label}
-        </div>
-    );
-
     return (
         <div style={{ display: 'flex', minHeight: '100vh' }}>
             {/* Sidebar */}
@@ -164,11 +168,11 @@ const AdminDashboard = () => {
                     <h2 style={{ fontSize: '1.5rem' }}>Admin<span className="text-accent">Panel</span></h2>
                 </div>
                 <div style={{ flex: 1, paddingTop: '20px' }}>
-                    <SidebarItem id="portfolio" label="Portfolio" />
-                    <SidebarItem id="services" label="Services" />
-                    <SidebarItem id="about" label="About Me" />
-                    <SidebarItem id="hero" label="Hero & Socials" />
-                    <SidebarItem id="messages" label="Messages" />
+                    <SidebarItem id="portfolio" label="Portfolio" activeTab={activeTab} onSelect={setActiveTab} />
+                    <SidebarItem id="services" label="Services" activeTab={activeTab} onSelect={setActiveTab} />
+                    <SidebarItem id="about" label="About Me" activeTab={activeTab} onSelect={setActiveTab} />
+                    <SidebarItem id="hero" label="Hero & Socials" activeTab={activeTab} onSelect={setActiveTab} />
+                    <SidebarItem id="messages" label="Messages" activeTab={activeTab} onSelect={setActiveTab} />
                 </div>
                 <div style={{ padding: '20px' }}>
                     <button onClick={handleLogout} className="btn" style={{ width: '100%', fontSize: '0.9rem' }}>Logout</button>
