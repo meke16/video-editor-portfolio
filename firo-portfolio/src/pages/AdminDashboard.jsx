@@ -2,9 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 import {
     getPortfolioItems,
     addPortfolioItem as createPortfolioItem,
+    updatePortfolioItem,
     deletePortfolioItem as removePortfolioItem,
     getServices,
     addService as createService,
+    updateService,
     deleteService as removeService,
     getAboutContent,
     saveAboutContent,
@@ -12,12 +14,14 @@ import {
     saveHeroData,
     getSocialLinks,
     addSocialLink as createSocialLink,
+    updateSocialLink,
     deleteSocialLink as removeSocialLink,
     getMessages,
     deleteMessage as removeMessage,
     logout as firebaseLogout
 } from '../services/firebase';
 import { useNavigate } from 'react-router-dom';
+import './AdminDashboard.css';
 
 const SidebarItem = ({ id, label, activeTab, onSelect }) => (
     <div
@@ -25,7 +29,7 @@ const SidebarItem = ({ id, label, activeTab, onSelect }) => (
         style={{
             padding: '15px 20px',
             cursor: 'pointer',
-            background: activeTab === id ? 'var(--accent-red)' : 'transparent',
+            background: activeTab === id ? 'var(--admin-accent)' : 'transparent',
             color: 'white',
             fontWeight: activeTab === id ? 'bold' : 'normal',
             borderLeft: activeTab === id ? '4px solid white' : '4px solid transparent',
@@ -35,6 +39,22 @@ const SidebarItem = ({ id, label, activeTab, onSelect }) => (
         {label}
     </div>
 );
+
+const Modal = ({ open, title, children, onClose, actions }) => {
+    if (!open) return null;
+    return (
+        <div className="admin-modal-backdrop" role="dialog" aria-modal="true">
+            <div className="admin-modal">
+                <div className="admin-modal-header">
+                    <h3>{title}</h3>
+                    <button className="admin-modal-close" onClick={onClose} aria-label="Close">×</button>
+                </div>
+                <div className="admin-modal-body">{children}</div>
+                <div className="admin-modal-actions">{actions}</div>
+            </div>
+        </div>
+    );
+};
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -50,6 +70,25 @@ const AdminDashboard = () => {
     const [newItem, setNewItem] = useState({ title: '', description: '', youtubeUrl: '', featured: false });
     const [newService, setNewService] = useState({ title: '', description: '' });
     const [newSocial, setNewSocial] = useState({ platform: '', url: '' });
+
+    const [confirmModal, setConfirmModal] = useState({
+        open: false,
+        title: '',
+        message: '',
+        confirmText: 'Confirm',
+        cancelText: 'Cancel',
+        onConfirm: null,
+        onCancel: null
+    });
+    const [infoModal, setInfoModal] = useState({
+        open: false,
+        title: '',
+        message: '',
+        buttonText: 'OK'
+    });
+    const [editModal, setEditModal] = useState({ open: false, type: '', data: null });
+    const [editForm, setEditForm] = useState(null);
+    const [modalBusy, setModalBusy] = useState(false);
 
     const fetchData = useCallback(async () => {
         try {
@@ -90,64 +129,247 @@ const AdminDashboard = () => {
         navigate('/login');
     };
 
+    const openConfirm = (config) => {
+        setConfirmModal({
+            open: true,
+            title: 'Please Confirm',
+            message: '',
+            confirmText: 'Confirm',
+            cancelText: 'Cancel',
+            onConfirm: null,
+            onCancel: null,
+            ...config
+        });
+    };
+
+    const closeConfirm = () => {
+        setConfirmModal((prev) => ({ ...prev, open: false }));
+    };
+
+    const openInfo = (config) => {
+        setInfoModal({
+            open: true,
+            title: 'Done',
+            message: '',
+            buttonText: 'OK',
+            ...config
+        });
+    };
+
+    const closeInfo = () => {
+        setInfoModal((prev) => ({ ...prev, open: false }));
+    };
+
+    const handleConfirm = async () => {
+        if (!confirmModal.onConfirm) return;
+        setModalBusy(true);
+        try {
+            await confirmModal.onConfirm();
+        } finally {
+            setModalBusy(false);
+            closeConfirm();
+        }
+    };
+
+    const handleCancel = () => {
+        if (confirmModal.onCancel) confirmModal.onCancel();
+        closeConfirm();
+    };
+
+    const openEdit = (type, data) => {
+        setEditModal({ open: true, type, data });
+        setEditForm({ ...data });
+    };
+
+    const closeEdit = () => {
+        setEditModal({ open: false, type: '', data: null });
+        setEditForm(null);
+    };
+
     // --- Handlers ---
 
     // Portfolio
     const addPortfolioItem = async (e) => {
         e.preventDefault();
-        await createPortfolioItem(newItem);
-        setNewItem({ title: '', description: '', youtubeUrl: '', featured: false });
-        fetchData();
+        openConfirm({
+            title: 'Add Portfolio Item',
+            message: 'Create this portfolio item?',
+            confirmText: 'Add',
+            onConfirm: async () => {
+                await createPortfolioItem(newItem);
+                setNewItem({ title: '', description: '', youtubeUrl: '', featured: false });
+                fetchData();
+                openInfo({ title: 'Added', message: 'Portfolio item created successfully.' });
+            }
+        });
     };
     const deletePortfolioItem = async (id) => {
-        if (window.confirm('Are you sure?')) {
-            await removePortfolioItem(id);
-            fetchData();
-        }
+        openConfirm({
+            title: 'Delete Portfolio Item',
+            message: 'This action cannot be undone. Continue?',
+            confirmText: 'Delete',
+            onConfirm: async () => {
+                await removePortfolioItem(id);
+                fetchData();
+                openInfo({ title: 'Deleted', message: 'Portfolio item deleted.' });
+            }
+        });
     };
 
     // Services
     const addService = async (e) => {
         e.preventDefault();
-        await createService(newService);
-        setNewService({ title: '', description: '' });
-        fetchData();
+        openConfirm({
+            title: 'Add Service',
+            message: 'Create this service?',
+            confirmText: 'Add',
+            onConfirm: async () => {
+                await createService(newService);
+                setNewService({ title: '', description: '' });
+                fetchData();
+                openInfo({ title: 'Added', message: 'Service created successfully.' });
+            }
+        });
     };
     const deleteService = async (id) => {
-        if (window.confirm('Are you sure?')) {
-            await removeService(id);
-            fetchData();
-        }
+        openConfirm({
+            title: 'Delete Service',
+            message: 'This action cannot be undone. Continue?',
+            confirmText: 'Delete',
+            onConfirm: async () => {
+                await removeService(id);
+                fetchData();
+                openInfo({ title: 'Deleted', message: 'Service deleted.' });
+            }
+        });
     };
 
     // About
     const updateAbout = async () => {
-        await saveAboutContent(aboutContent);
-        alert('About section updated!');
+        openConfirm({
+            title: 'Update About Section',
+            message: 'Save changes to About section?',
+            confirmText: 'Save',
+            onConfirm: async () => {
+                await saveAboutContent(aboutContent);
+                openInfo({ title: 'Updated', message: 'About section updated.' });
+            }
+        });
     };
 
     // Hero & Socials
     const updateHero = async (e) => {
         e.preventDefault();
-        await saveHeroData(heroData);
-        alert('Hero section updated!');
+        openConfirm({
+            title: 'Update Hero Section',
+            message: 'Save changes to hero section?',
+            confirmText: 'Save',
+            onConfirm: async () => {
+                await saveHeroData(heroData);
+                openInfo({ title: 'Updated', message: 'Hero section updated.' });
+            }
+        });
     };
     const addSocial = async (e) => {
         e.preventDefault();
-        await createSocialLink(newSocial);
-        setNewSocial({ platform: '', url: '' });
-        fetchData();
+        openConfirm({
+            title: 'Add Social Link',
+            message: 'Create this social link?',
+            confirmText: 'Add',
+            onConfirm: async () => {
+                await createSocialLink(newSocial);
+                setNewSocial({ platform: '', url: '' });
+                fetchData();
+                openInfo({ title: 'Added', message: 'Social link created.' });
+            }
+        });
     };
     const deleteSocial = async (id) => {
-        await removeSocialLink(id);
-        fetchData();
+        openConfirm({
+            title: 'Delete Social Link',
+            message: 'This action cannot be undone. Continue?',
+            confirmText: 'Delete',
+            onConfirm: async () => {
+                await removeSocialLink(id);
+                fetchData();
+                openInfo({ title: 'Deleted', message: 'Social link deleted.' });
+            }
+        });
     };
 
     // Messages
     const deleteMessage = async (id) => {
-        if (window.confirm('Delete this message?')) {
-            await removeMessage(id);
-            fetchData();
+        openConfirm({
+            title: 'Delete Message',
+            message: 'This action cannot be undone. Continue?',
+            confirmText: 'Delete',
+            onConfirm: async () => {
+                await removeMessage(id);
+                fetchData();
+                openInfo({ title: 'Deleted', message: 'Message deleted.' });
+            }
+        });
+    };
+
+    const saveEdit = () => {
+        if (!editForm || !editModal.data) return;
+
+        const reopenEdit = () => openEdit(editModal.type, editForm);
+
+        if (editModal.type === 'portfolio') {
+            closeEdit();
+            openConfirm({
+                title: 'Save Portfolio Changes',
+                message: 'Update this portfolio item?',
+                confirmText: 'Save',
+                onConfirm: async () => {
+                    await updatePortfolioItem(editModal.data.id, {
+                        title: editForm.title,
+                        description: editForm.description,
+                        youtubeUrl: editForm.youtubeUrl,
+                        featured: !!editForm.featured
+                    });
+                    fetchData();
+                    openInfo({ title: 'Updated', message: 'Portfolio item updated.' });
+                },
+                onCancel: reopenEdit
+            });
+        }
+
+        if (editModal.type === 'service') {
+            closeEdit();
+            openConfirm({
+                title: 'Save Service Changes',
+                message: 'Update this service?',
+                confirmText: 'Save',
+                onConfirm: async () => {
+                    await updateService(editModal.data.id, {
+                        title: editForm.title,
+                        description: editForm.description
+                    });
+                    fetchData();
+                    openInfo({ title: 'Updated', message: 'Service updated.' });
+                },
+                onCancel: reopenEdit
+            });
+        }
+
+        if (editModal.type === 'social') {
+            closeEdit();
+            openConfirm({
+                title: 'Save Social Changes',
+                message: 'Update this social link?',
+                confirmText: 'Save',
+                onConfirm: async () => {
+                    await updateSocialLink(editModal.data.id, {
+                        platform: editForm.platform,
+                        url: editForm.url
+                    });
+                    fetchData();
+                    openInfo({ title: 'Updated', message: 'Social link updated.' });
+                },
+                onCancel: reopenEdit
+            });
         }
     };
 
@@ -161,9 +383,9 @@ const AdminDashboard = () => {
 
 
     return (
-        <div style={{ display: 'flex', minHeight: '100vh' }}>
+        <div className="admin-dashboard" style={{ display: 'flex', minHeight: '100vh' }}>
             {/* Sidebar */}
-            <div style={{ width: '250px', background: '#0a0a0a', borderRight: '1px solid #222', display: 'flex', flexDirection: 'column' }}>
+            <div className="admin-sidebar" style={{ width: '250px', borderRight: '1px solid #222', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ padding: '30px 20px', borderBottom: '1px solid #222' }}>
                     <h2 style={{ fontSize: '1.5rem' }}>Admin<span className="text-accent">Panel</span></h2>
                 </div>
@@ -180,7 +402,7 @@ const AdminDashboard = () => {
             </div>
 
             {/* Main Content */}
-            <div style={{ flex: 1, padding: '40px', overflowY: 'auto', maxHeight: '100vh' }}>
+            <div className="admin-main" style={{ flex: 1, padding: '40px', overflowY: 'auto', maxHeight: '100vh' }}>
                 <h1 style={{ marginBottom: '30px', borderBottom: '1px solid #222', paddingBottom: '20px' }}>
                     Manage <span className="text-accent">{activeTab.replace(/^\w/, c => c.toUpperCase())}</span>
                 </h1>
@@ -188,7 +410,7 @@ const AdminDashboard = () => {
                 {/* Portfolio Tab */}
                 {activeTab === 'portfolio' && (
                     <div>
-                        <div style={{ background: '#121212', padding: '25px', borderRadius: '8px', marginBottom: '30px' }}>
+                        <div className="admin-card" style={{ padding: '25px', borderRadius: '8px', marginBottom: '30px' }}>
                             <h3>Add New Video</h3>
                             <form onSubmit={addPortfolioItem} style={{ marginTop: '20px' }}>
                                 <input placeholder="Title" value={newItem.title} onChange={e => setNewItem({ ...newItem, title: e.target.value })} required />
@@ -204,12 +426,15 @@ const AdminDashboard = () => {
 
                         <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
                             {items.map(item => (
-                                <div key={item.id} style={{ background: '#121212', borderRadius: '8px', padding: '20px', border: '1px solid #222' }}>
+                                <div key={item.id} className="admin-card" style={{ borderRadius: '8px', padding: '20px' }}>
                                     <h4>{item.title}</h4>
                                     <p style={{ fontSize: '0.8rem', color: '#888', margin: '10px 0' }}>{item.description}</p>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
-                                        {item.featured ? <span style={{ color: 'var(--accent-red)', fontSize: '0.8rem' }}>★ FEATURED</span> : <span></span>}
-                                        <button onClick={() => deletePortfolioItem(item.id)} style={{ color: '#ff4444', background: 'transparent', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>Delete</button>
+                                        {item.featured ? <span style={{ color: 'var(--admin-accent)', fontSize: '0.8rem' }}>★ FEATURED</span> : <span></span>}
+                                        <div style={{ display: 'flex', gap: '10px' }}>
+                                            <button onClick={() => openEdit('portfolio', item)} className="admin-link">Edit</button>
+                                            <button onClick={() => deletePortfolioItem(item.id)} className="admin-link admin-link-danger">Delete</button>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -220,7 +445,7 @@ const AdminDashboard = () => {
                 {/* Services Tab */}
                 {activeTab === 'services' && (
                     <div>
-                        <div style={{ background: '#121212', padding: '25px', borderRadius: '8px', marginBottom: '30px' }}>
+                        <div className="admin-card" style={{ padding: '25px', borderRadius: '8px', marginBottom: '30px' }}>
                             <h3>Add Service</h3>
                             <form onSubmit={addService} style={{ marginTop: '20px' }}>
                                 <input placeholder="Service Title" value={newService.title} onChange={e => setNewService({ ...newService, title: e.target.value })} required />
@@ -230,12 +455,15 @@ const AdminDashboard = () => {
                         </div>
                         <div style={{ display: 'grid', gap: '15px' }}>
                             {services.map(s => (
-                                <div key={s.id} style={{ background: '#121212', padding: '20px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #222' }}>
+                                <div key={s.id} className="admin-card" style={{ padding: '20px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <div>
                                         <h3>{s.title}</h3>
                                         <p style={{ color: '#aaa', marginTop: '5px' }}>{s.description}</p>
                                     </div>
-                                    <button onClick={() => deleteService(s.id)} style={{ color: '#ff4444', background: 'transparent', border: 'none', cursor: 'pointer' }}>Delete</button>
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <button onClick={() => openEdit('service', s)} className="admin-link">Edit</button>
+                                        <button onClick={() => deleteService(s.id)} className="admin-link admin-link-danger">Delete</button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -244,7 +472,7 @@ const AdminDashboard = () => {
 
                 {/* About Tab */}
                 {activeTab === 'about' && (
-                    <div style={{ background: '#121212', padding: '30px', borderRadius: '8px' }}>
+                    <div className="admin-card" style={{ padding: '30px', borderRadius: '8px' }}>
                         <h3>Edit About Details</h3>
                         <p style={{ color: '#888', marginBottom: '20px' }}>This content will appear in the About Me section.</p>
                         <textarea
@@ -261,7 +489,7 @@ const AdminDashboard = () => {
                 {activeTab === 'hero' && (
                     <div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-                            <div style={{ background: '#121212', padding: '25px', borderRadius: '8px' }}>
+                            <div className="admin-card" style={{ padding: '25px', borderRadius: '8px' }}>
                                 <h3>Hero Section</h3>
                                 <form onSubmit={updateHero} style={{ marginTop: '20px' }}>
                                     <label style={{ display: 'block', marginBottom: '5px', color: '#888' }}>Main Title</label>
@@ -277,7 +505,7 @@ const AdminDashboard = () => {
                                 </form>
                             </div>
 
-                            <div style={{ background: '#121212', padding: '25px', borderRadius: '8px' }}>
+                            <div className="admin-card" style={{ padding: '25px', borderRadius: '8px' }}>
                                 <h3>Social Links</h3>
                                 <form onSubmit={addSocial} style={{ marginTop: '20px', marginBottom: '20px' }}>
                                     <div style={{ display: 'flex', gap: '10px' }}>
@@ -299,9 +527,12 @@ const AdminDashboard = () => {
 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                     {socials.map(s => (
-                                        <div key={s.id} style={{ background: '#000', padding: '10px 15px', borderRadius: '5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div key={s.id} className="admin-card" style={{ padding: '10px 15px', borderRadius: '5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <span><b>{s.platform}</b>: <a href={s.url} target="_blank" rel="noreferrer" style={{ color: '#888' }}>{s.url}</a></span>
-                                            <button onClick={() => deleteSocial(s.id)} style={{ color: '#ff4444', background: 'transparent', border: 'none', cursor: 'pointer' }}>×</button>
+                                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                                <button onClick={() => openEdit('social', s)} className="admin-link">Edit</button>
+                                                <button onClick={() => deleteSocial(s.id)} className="admin-link admin-link-danger">Delete</button>
+                                            </div>
                                         </div>
                                     ))}
                                     {socials.length === 0 && <p style={{ color: '#666', textAlign: 'center' }}>No social links yet.</p>}
@@ -316,7 +547,7 @@ const AdminDashboard = () => {
                     <div>
                         <div style={{ display: 'grid', gap: '20px' }}>
                             {messages.map(msg => (
-                                <div key={msg.id} style={{ background: '#121212', padding: '25px', borderRadius: '8px', borderLeft: '4px solid var(--accent-red)' }}>
+                                <div key={msg.id} className="admin-card" style={{ padding: '25px', borderRadius: '8px', borderLeft: '4px solid var(--admin-accent)' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
                                         <div>
                                             <h3 style={{ fontSize: '1.2rem' }}>{msg.name}</h3>
@@ -326,7 +557,7 @@ const AdminDashboard = () => {
                                             <span style={{ display: 'block', color: '#666', fontSize: '0.8rem', marginBottom: '5px' }}>
                                                 {formatMessageDate(msg.createdAt)}
                                             </span>
-                                            <button onClick={() => deleteMessage(msg.id)} style={{ color: '#ff4444', background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '0.9rem' }}>Delete</button>
+                                            <button onClick={() => deleteMessage(msg.id)} className="admin-link admin-link-danger" style={{ fontSize: '0.9rem' }}>Delete</button>
                                         </div>
                                     </div>
                                     <p style={{ background: '#0a0a0a', padding: '15px', borderRadius: '5px', lineHeight: '1.6' }}>{msg.message}</p>
@@ -342,6 +573,71 @@ const AdminDashboard = () => {
                     </div>
                 )}
             </div>
+
+            <Modal
+                open={confirmModal.open}
+                title={confirmModal.title}
+                onClose={handleCancel}
+                actions={
+                    <>
+                        <button className="btn" onClick={handleCancel} disabled={modalBusy}>{confirmModal.cancelText}</button>
+                        <button className="btn btn-primary" onClick={handleConfirm} disabled={modalBusy}>
+                            {modalBusy ? 'Please wait...' : confirmModal.confirmText}
+                        </button>
+                    </>
+                }
+            >
+                <p style={{ color: '#cbd6e6', margin: 0 }}>{confirmModal.message}</p>
+            </Modal>
+
+            <Modal
+                open={infoModal.open}
+                title={infoModal.title}
+                onClose={closeInfo}
+                actions={
+                    <button className="btn btn-primary" onClick={closeInfo}>{infoModal.buttonText}</button>
+                }
+            >
+                <p style={{ color: '#cbd6e6', margin: 0 }}>{infoModal.message}</p>
+            </Modal>
+
+            <Modal
+                open={editModal.open}
+                title={editModal.type === 'portfolio' ? 'Edit Portfolio Item' : editModal.type === 'service' ? 'Edit Service' : 'Edit Social Link'}
+                onClose={closeEdit}
+                actions={
+                    <>
+                        <button className="btn" onClick={closeEdit}>Cancel</button>
+                        <button className="btn btn-primary" onClick={saveEdit}>Save Changes</button>
+                    </>
+                }
+            >
+                {editModal.type === 'portfolio' && editForm && (
+                    <div className="admin-form-grid">
+                        <input value={editForm.title || ''} onChange={e => setEditForm({ ...editForm, title: e.target.value })} placeholder="Title" />
+                        <input value={editForm.description || ''} onChange={e => setEditForm({ ...editForm, description: e.target.value })} placeholder="Description" />
+                        <input value={editForm.youtubeUrl || ''} onChange={e => setEditForm({ ...editForm, youtubeUrl: e.target.value })} placeholder="YouTube URL" />
+                        <label className="admin-checkbox">
+                            <input type="checkbox" checked={!!editForm.featured} onChange={e => setEditForm({ ...editForm, featured: e.target.checked })} />
+                            Featured on Homepage
+                        </label>
+                    </div>
+                )}
+
+                {editModal.type === 'service' && editForm && (
+                    <div className="admin-form-grid">
+                        <input value={editForm.title || ''} onChange={e => setEditForm({ ...editForm, title: e.target.value })} placeholder="Service Title" />
+                        <textarea rows="3" value={editForm.description || ''} onChange={e => setEditForm({ ...editForm, description: e.target.value })} placeholder="Description" />
+                    </div>
+                )}
+
+                {editModal.type === 'social' && editForm && (
+                    <div className="admin-form-grid">
+                        <input value={editForm.platform || ''} onChange={e => setEditForm({ ...editForm, platform: e.target.value })} placeholder="Platform" />
+                        <input value={editForm.url || ''} onChange={e => setEditForm({ ...editForm, url: e.target.value })} placeholder="URL" />
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 };

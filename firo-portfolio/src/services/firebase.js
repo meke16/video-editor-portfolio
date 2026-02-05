@@ -68,6 +68,9 @@ const addPortfolioItem = async (item) => {
   return docRef.id;
 };
 
+const updatePortfolioItem = async (id, item) =>
+  setDoc(doc(db, "portfolio", id), item, { merge: true });
+
 const deletePortfolioItem = async (id) => deleteDoc(doc(db, "portfolio", id));
 
 const getServices = async () => {
@@ -79,6 +82,9 @@ const addService = async (service) => {
   const docRef = await addDoc(collection(db, "services"), service);
   return docRef.id;
 };
+
+const updateService = async (id, service) =>
+  setDoc(doc(db, "services", id), service, { merge: true });
 
 const deleteService = async (id) => deleteDoc(doc(db, "services", id));
 
@@ -123,6 +129,9 @@ const addSocialLink = async (social) => {
   return docRef.id;
 };
 
+const updateSocialLink = async (id, social) =>
+  setDoc(doc(db, "socials", id), social, { merge: true });
+
 const deleteSocialLink = async (id) => deleteDoc(doc(db, "socials", id));
 
 const addContactMessage = async (message) =>
@@ -149,9 +158,11 @@ export {
   onAuthChange,
   getPortfolioItems,
   addPortfolioItem,
+  updatePortfolioItem,
   deletePortfolioItem,
   getServices,
   addService,
+  updateService,
   deleteService,
   getAboutContent,
   saveAboutContent,
@@ -160,6 +171,7 @@ export {
   saveHeroData,
   getSocialLinks,
   addSocialLink,
+  updateSocialLink,
   deleteSocialLink,
   addContactMessage,
   getMessages,
