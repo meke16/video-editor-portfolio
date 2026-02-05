@@ -8,7 +8,7 @@ import {
   onAuthStateChanged
 } from "firebase/auth";
 import {
-  getFirestore,
+  initializeFirestore,
   collection,
   getDocs,
   addDoc,
@@ -38,7 +38,10 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
+const db = initializeFirestore(app, {
+  experimentalAutoDetectLongPolling: true,
+  useFetchStreams: false
+});
 
 const registerWithEmail = (email, password) =>
   createUserWithEmailAndPassword(auth, email, password);
