@@ -8,7 +8,6 @@ import {
   onAuthStateChanged
 } from "firebase/auth";
 import {
-  initializeFirestore,
   collection,
   getDocs,
   addDoc,
@@ -21,27 +20,31 @@ import {
   orderBy,
   onSnapshot
 } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
+
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const env = import.meta.env;
+
 const firebaseConfig = {
-  apiKey: env.VITE_FIREBASE_API_KEY || "AIzaSyCLSNRq4cN6MhJGQjyGeNj8QoGyjm3PnVQ",
-  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || "firo-fed58.firebaseapp.com",
-  projectId: env.VITE_FIREBASE_PROJECT_ID || "firo-fed58",
-  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || "firo-fed58.appspot.com",
-  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || "938201610605",
-  appId: env.VITE_FIREBASE_APP_ID || "1:938201610605:web:5c6922b9be92fe5cb64264",
-  measurementId: env.VITE_FIREBASE_MEASUREMENT_ID || "G-SL5GTX4PZ0"
+  apiKey: env.VITE_FIREBASE_API_KEY,
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: env.VITE_FIREBASE_APP_ID
 };
+
+// Add a check to help you debug in the browser console
+if (!firebaseConfig.apiKey) {
+  console.error("Firebase API Key is missing! Check your Vercel Environment Variables.");
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = initializeFirestore(app, {
-  experimentalAutoDetectLongPolling: true,
-  useFetchStreams: false
-});
+
+const db = getFirestore(app);
 
 const registerWithEmail = (email, password) =>
   createUserWithEmailAndPassword(auth, email, password);
