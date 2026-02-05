@@ -29,7 +29,7 @@ const firebaseConfig = {
   apiKey: env.VITE_FIREBASE_API_KEY || "AIzaSyCLSNRq4cN6MhJGQjyGeNj8QoGyjm3PnVQ",
   authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || "firo-fed58.firebaseapp.com",
   projectId: env.VITE_FIREBASE_PROJECT_ID || "firo-fed58",
-  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || "firo-fed58.firebasestorage.app",
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || "firo-fed58.appspot.com",
   messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || "938201610605",
   appId: env.VITE_FIREBASE_APP_ID || "1:938201610605:web:5c6922b9be92fe5cb64264",
   measurementId: env.VITE_FIREBASE_MEASUREMENT_ID || "G-SL5GTX4PZ0"
