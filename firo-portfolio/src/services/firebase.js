@@ -18,19 +18,21 @@ import {
   setDoc,
   serverTimestamp,
   query,
-  orderBy
+  orderBy,
+  onSnapshot
 } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const env = import.meta.env;
 const firebaseConfig = {
-  apiKey: "AIzaSyCLSNRq4cN6MhJGQjyGeNj8QoGyjm3PnVQ",
-  authDomain: "firo-fed58.firebaseapp.com",
-  projectId: "firo-fed58",
-  storageBucket: "firo-fed58.firebasestorage.app",
-  messagingSenderId: "938201610605",
-  appId: "1:938201610605:web:5c6922b9be92fe5cb64264",
-  measurementId: "G-SL5GTX4PZ0"
+  apiKey: env.VITE_FIREBASE_API_KEY || "AIzaSyCLSNRq4cN6MhJGQjyGeNj8QoGyjm3PnVQ",
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || "firo-fed58.firebaseapp.com",
+  projectId: env.VITE_FIREBASE_PROJECT_ID || "firo-fed58",
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || "firo-fed58.firebasestorage.app",
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || "938201610605",
+  appId: env.VITE_FIREBASE_APP_ID || "1:938201610605:web:5c6922b9be92fe5cb64264",
+  measurementId: env.VITE_FIREBASE_MEASUREMENT_ID || "G-SL5GTX4PZ0"
 };
 
 // Initialize Firebase
@@ -91,6 +93,17 @@ const getHeroData = async () => {
     : { title: "", subtitle: "", imageUrl: "" };
 };
 
+const subscribeHeroData = (callback) => {
+  const docRef = doc(db, "content", "hero");
+  return onSnapshot(docRef, (snapshot) => {
+    callback(
+      snapshot.exists()
+        ? snapshot.data()
+        : { title: "", subtitle: "", imageUrl: "" }
+    );
+  });
+};
+
 const saveHeroData = async (heroData) =>
   setDoc(doc(db, "content", "hero"), heroData, { merge: true });
 
@@ -137,6 +150,7 @@ export {
   getAboutContent,
   saveAboutContent,
   getHeroData,
+  subscribeHeroData,
   saveHeroData,
   getSocialLinks,
   addSocialLink,

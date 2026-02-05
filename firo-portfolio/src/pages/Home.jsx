@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getPortfolioItems, getHeroData, getSocialLinks } from '../services/firebase';
+import { getPortfolioItems, getSocialLinks, subscribeHeroData } from '../services/firebase';
 import { Play } from 'lucide-react';
 import FloatingParticles from '../components/FloatingParticles';
 
@@ -10,22 +10,28 @@ const Home = () => {
     const [socials, setSocials] = useState([]);
 
     useEffect(() => {
+        let unsubscribeHero = null;
+
         const fetchData = async () => {
             try {
-                const [portfolioData, heroRes, socialsRes] = await Promise.all([
+                const [portfolioData, socialsRes] = await Promise.all([
                     getPortfolioItems(),
-                    getHeroData(),
                     getSocialLinks()
                 ]);
 
                 setFeaturedVideos(portfolioData.filter(v => v.featured).slice(0, 3));
-                setHeroData(heroRes);
                 setSocials(socialsRes);
             } catch (err) {
                 console.error("Failed to fetch home data", err);
             }
         };
+
         fetchData();
+        unsubscribeHero = subscribeHeroData(setHeroData);
+
+        return () => {
+            if (unsubscribeHero) unsubscribeHero();
+        };
     }, []);
     const getEmbedUrl = (url) => {
         if (!url) return '';
