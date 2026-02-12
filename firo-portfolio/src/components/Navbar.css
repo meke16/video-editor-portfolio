@@ -63,7 +63,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: var(--accent-red);
+  background: blue;
   transition: width 0.3s ease;
 }
 
@@ -73,6 +73,16 @@
 
 .nav-links a:hover {
   color: var(--accent-red);
+}
+
+/* Active tab - current page */
+.nav-links a.active {
+  color: var(--accent-red);
+  font-weight: 600;
+}
+
+.nav-links a.active::after {
+  width: 100%;
 }
 
 .menu-icon {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Menu, X, Video } from 'lucide-react';
 import './Navbar.css'; // We'll add some specific nav styles inline or in index.css
 
@@ -27,11 +27,11 @@ const Navbar = () => {
                 </div>
 
                 <ul className={`nav-links ${isOpen ? 'active' : ''}`}>
-                    <li><Link to="/">Home</Link></li>
-                    <li><Link to="/portfolio">Portfolio</Link></li>
-                    <li><Link to="/services">Services</Link></li>
-                    <li><Link to="/about">About</Link></li>
-                    <li><Link to="/contact">Contact</Link></li>
+                    <li><NavLink to="/" end>Home</NavLink></li>
+                    <li><NavLink to="/portfolio">Portfolio</NavLink></li>
+                    <li><NavLink to="/services">Services</NavLink></li>
+                    <li><NavLink to="/about">About</NavLink></li>
+                    <li><NavLink to="/contact">Contact</NavLink></li>
                 </ul>
             </div>
         </nav>
