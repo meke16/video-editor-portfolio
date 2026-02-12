@@ -23,18 +23,10 @@ import {
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 
-const SidebarItem = ({ id, label, activeTab, onSelect }) => (
+const SidebarItem = ({ id, label, activeTab, onSelect, onClose }) => (
     <div
-        onClick={() => onSelect(id)}
-        style={{
-            padding: '15px 20px',
-            cursor: 'pointer',
-            background: activeTab === id ? 'var(--admin-accent)' : 'transparent',
-            color: 'white',
-            fontWeight: activeTab === id ? 'bold' : 'normal',
-            borderLeft: activeTab === id ? '4px solid white' : '4px solid transparent',
-            transition: '0.2s'
-        }}
+        onClick={() => { onSelect(id); onClose?.(); }}
+        className={`admin-sidebar-item ${activeTab === id ? 'active' : ''}`}
     >
         {label}
     </div>
@@ -59,6 +51,7 @@ const Modal = ({ open, title, children, onClose, actions }) => {
 const AdminDashboard = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('portfolio');
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [items, setItems] = useState([]);
     const [services, setServices] = useState([]);
     const [aboutContent, setAboutContent] = useState('');
@@ -383,26 +376,44 @@ const AdminDashboard = () => {
 
 
     return (
-        <div className="admin-dashboard" style={{ display: 'flex', minHeight: '100vh' }}>
+        <div className="admin-dashboard">
+            {/* Sidebar Toggle - Mobile */}
+            <button
+                className="admin-sidebar-toggle"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+            >
+                {sidebarOpen ? '×' : '☰'}
+            </button>
+
+            {/* Sidebar Overlay */}
+            {sidebarOpen && (
+                <div
+                    className="admin-sidebar-overlay"
+                    onClick={() => setSidebarOpen(false)}
+                    aria-hidden="true"
+                />
+            )}
+
             {/* Sidebar */}
-            <div className="admin-sidebar" style={{ width: '250px', borderRight: '1px solid #222', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ padding: '30px 20px', borderBottom: '1px solid #222' }}>
-                    <h2 style={{ fontSize: '1.5rem' }}>Admin<span className="text-accent">Panel</span></h2>
+            <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
+                <div className="admin-sidebar-header">
+                    <h2>Admin<span className="text-accent">Panel</span></h2>
                 </div>
-                <div style={{ flex: 1, paddingTop: '20px' }}>
-                    <SidebarItem id="portfolio" label="Portfolio" activeTab={activeTab} onSelect={setActiveTab} />
-                    <SidebarItem id="services" label="Services" activeTab={activeTab} onSelect={setActiveTab} />
-                    <SidebarItem id="about" label="About Me" activeTab={activeTab} onSelect={setActiveTab} />
-                    <SidebarItem id="hero" label="Hero & Socials" activeTab={activeTab} onSelect={setActiveTab} />
-                    <SidebarItem id="messages" label="Messages" activeTab={activeTab} onSelect={setActiveTab} />
+                <nav className="admin-sidebar-nav">
+                    <SidebarItem id="portfolio" label="Portfolio" activeTab={activeTab} onSelect={setActiveTab} onClose={() => setSidebarOpen(false)} />
+                    <SidebarItem id="services" label="Services" activeTab={activeTab} onSelect={setActiveTab} onClose={() => setSidebarOpen(false)} />
+                    <SidebarItem id="about" label="About Me" activeTab={activeTab} onSelect={setActiveTab} onClose={() => setSidebarOpen(false)} />
+                    <SidebarItem id="hero" label="Hero & Socials" activeTab={activeTab} onSelect={setActiveTab} onClose={() => setSidebarOpen(false)} />
+                    <SidebarItem id="messages" label="Messages" activeTab={activeTab} onSelect={setActiveTab} onClose={() => setSidebarOpen(false)} />
+                </nav>
+                <div className="admin-sidebar-footer">
+                    <button onClick={handleLogout} className="btn admin-logout-btn">Logout</button>
                 </div>
-                <div style={{ padding: '20px' }}>
-                    <button onClick={handleLogout} className="btn" style={{ width: '100%', fontSize: '0.9rem' }}>Logout</button>
-                </div>
-            </div>
+            </aside>
 
             {/* Main Content */}
-            <div className="admin-main" style={{ flex: 1, padding: '40px', overflowY: 'auto', maxHeight: '100vh' }}>
+            <div className="admin-main">
                 <h1 style={{ marginBottom: '30px', borderBottom: '1px solid #222', paddingBottom: '20px' }}>
                     Manage <span className="text-accent">{activeTab.replace(/^\w/, c => c.toUpperCase())}</span>
                 </h1>
@@ -488,7 +499,7 @@ const AdminDashboard = () => {
                 {/* Hero & Socials Tab */}
                 {activeTab === 'hero' && (
                     <div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+                        <div className="admin-hero-grid">
                             <div className="admin-card" style={{ padding: '25px', borderRadius: '8px' }}>
                                 <h3>Hero Section</h3>
                                 <form onSubmit={updateHero} style={{ marginTop: '20px' }}>
@@ -507,8 +518,8 @@ const AdminDashboard = () => {
 
                             <div className="admin-card" style={{ padding: '25px', borderRadius: '8px' }}>
                                 <h3>Social Links</h3>
-                                <form onSubmit={addSocial} style={{ marginTop: '20px', marginBottom: '20px' }}>
-                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                <form onSubmit={addSocial} className="admin-social-form">
+                                    <div className="admin-social-inputs">
                                         <input
                                             value={newSocial.platform}
                                             onChange={e => setNewSocial({ ...newSocial, platform: e.target.value })}
@@ -522,7 +533,7 @@ const AdminDashboard = () => {
                                             style={{ marginBottom: 0 }}
                                         />
                                     </div>
-                                    <button className="btn btn-primary" style={{ marginTop: '10px', width: '100%' }}>Add Link</button>
+                                    <button className="btn btn-primary admin-add-link-btn">Add Link</button>
                                 </form>
 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

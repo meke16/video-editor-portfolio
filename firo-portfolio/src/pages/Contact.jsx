@@ -1,54 +1,107 @@
 import React, { useState } from 'react';
 import { addContactMessage } from '../services/firebase';
+import { Send, CheckCircle, AlertCircle } from 'lucide-react';
 
 const Contact = () => {
-    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-    const [status, setStatus] = useState('');
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState('');
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setStatus('sending');
-        try {
-            await addContactMessage(formData);
-            setStatus('success');
-            setFormData({ name: '', email: '', message: '' });
-        } catch (err) {
-            setStatus('error');
-        }
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('sending');
+    try {
+      await addContactMessage(formData);
+      setStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+    } catch (err) {
+      setStatus('error');
+    }
+  };
 
-    return (
-        <div className="section container">
-            <div style={{ maxWidth: '600px', margin: '0 auto', background: '#121212', padding: '40px', borderRadius: '10px' }}>
-                <h1 className="text-center" style={{ marginBottom: '30px' }}>Get In <span className="text-accent">Touch</span></h1>
+  return (
+    <div className="section page-contact">
+      <div className="container">
+        <div className="contact-card">
+          <h1 className="section-title text-center contact-title">
+            Get In <span className="text-accent">Touch</span>
+          </h1>
 
-                {status === 'success' && <div style={{ background: 'green', color: 'white', padding: '10px', marginBottom: '20px', borderRadius: '5px' }}>Message sent successfully!</div>}
-                {status === 'error' && <div style={{ background: 'red', color: 'white', padding: '10px', marginBottom: '20px', borderRadius: '5px' }}>Failed to send message.</div>}
-
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <label>Name</label>
-                        <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-                    </div>
-                    <div>
-                        <label>Email</label>
-                        <input type="email" name="email" value={formData.email} onChange={handleChange} required />
-                    </div>
-                    <div>
-                        <label>Message</label>
-                        <textarea name="message" rows="5" value={formData.message} onChange={handleChange} required></textarea>
-                    </div>
-                    <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={status === 'sending'}>
-                        {status === 'sending' ? 'Sending...' : 'Send Message'}
-                    </button>
-                </form>
+          {status === 'success' && (
+            <div className="contact-alert contact-alert-success">
+              <CheckCircle size={20} />
+              <span>Message sent successfully! I&apos;ll get back to you soon.</span>
             </div>
+          )}
+          {status === 'error' && (
+            <div className="contact-alert contact-alert-error">
+              <AlertCircle size={20} />
+              <span>Failed to send message. Please try again.</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="contact-form">
+            <div className="form-group">
+              <label htmlFor="name">Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Your name"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="your@email.com"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="message">Message</label>
+              <textarea
+                id="message"
+                name="message"
+                rows="5"
+                value={formData.message}
+                onChange={handleChange}
+                placeholder="Tell me about your project..."
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="btn btn-primary contact-submit"
+              disabled={status === 'sending'}
+            >
+              {status === 'sending' ? (
+                <>
+                  <span className="btn-spinner" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Send size={18} />
+                  Send Message
+                </>
+              )}
+            </button>
+          </form>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default Contact;

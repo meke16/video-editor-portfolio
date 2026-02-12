@@ -12,9 +12,7 @@ const About = () => {
     const fetchAbout = async () => {
       try {
         const data = await getAboutContent();
-
         if (!isMounted) return;
-
         setContent(data?.content || "");
       } catch (err) {
         console.error("Failed to fetch About content:", err);
@@ -25,53 +23,44 @@ const About = () => {
     };
 
     fetchAbout();
-
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, []);
 
   return (
-    <div className="section container">
-      <div
-        style={{
-          maxWidth: "800px",
-          margin: "0 auto",
-          background: "#121212",
-          padding: "40px",
-          borderRadius: "10px",
-        }}
-      >
-        <h1 className="text-center" style={{ marginBottom: "30px" }}>
-          About <span className="text-accent">Me</span>
-        </h1>
+    <div className="section page-about">
+      <div className="container">
+        <div className="about-card">
+          <h1 className="section-title text-center about-title">
+            About <span className="text-accent">Me</span>
+          </h1>
 
-        <div
-          style={{
-            fontSize: "1.1rem",
-            color: "#ccc",
-            lineHeight: "1.8",
-          }}
-        >
-          {loading && <p>Loading...</p>}
+          <div className="about-content">
+            {loading && (
+              <div className="about-loading">
+                <div className="loading-spinner" />
+                <p>Loading...</p>
+              </div>
+            )}
 
-          {!loading && error && (
-            <p style={{ color: "#ff6b6b" }}>
-              Failed to load content. Please try again later.
-            </p>
-          )}
+            {!loading && error && (
+              <div className="about-error">
+                <p>Failed to load content. Please try again later.</p>
+              </div>
+            )}
 
-          {!loading && !error && content && (
-            <div
-              dangerouslySetInnerHTML={{
-                __html: content.replace(/\n/g, "<br />"),
-              }}
-            />
-          )}
+            {!loading && !error && content && (
+              <div
+                className="about-text"
+                dangerouslySetInnerHTML={{
+                  __html: content.replace(/\n/g, "<br />"),
+                }}
+              />
+            )}
 
-          {!loading && !error && !content && (
-            <p>No content available yet.</p>
-          )}
+            {!loading && !error && !content && (
+              <p className="about-empty">No content available yet.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

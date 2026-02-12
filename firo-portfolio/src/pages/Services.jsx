@@ -2,48 +2,61 @@ import React, { useEffect, useState } from 'react';
 import { getServices } from '../services/firebase';
 import { Film, Scissors, Zap } from 'lucide-react';
 
+const iconMap = [Scissors, Zap, Film];
+
 const Services = () => {
-    const [services, setServices] = useState([]);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchServices = async () => {
-            try {
-                const data = await getServices();
-                setServices(data);
-            } catch (err) {
-                console.error(err);
-            }
-        };
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const data = await getServices();
+        setServices(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
 
-        fetchServices();
-    }, []);
+  return (
+    <div className="section page-services">
+      <div className="container">
+        <h1 className="section-title text-center services-title">
+          My <span className="text-accent">Services</span>
+        </h1>
 
-    return (
-        <div className="section container">
-            <h1 className="text-center" style={{ marginBottom: '50px' }}>My <span className="text-accent">Services</span></h1>
+        {loading ? (
+          <div className="services-loading">
+            <div className="loading-spinner" />
+            <p>Loading services...</p>
+          </div>
+        ) : (
+          <div className="services-grid">
+            {services.map((service, idx) => {
+              const Icon = iconMap[idx % 3];
+              return (
+                <article key={service.id} className="service-card">
+                  <div className="service-icon">
+                    <Icon size={40} strokeWidth={1.5} />
+                  </div>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                </article>
+              );
+            })}
+          </div>
+        )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
-                {services.length > 0 ? services.map((service, idx) => (
-                    <div key={service.id} style={{
-                        background: '#121212',
-                        padding: '30px',
-                        borderRadius: '10px',
-                        border: '1px solid #222',
-                        textAlign: 'center',
-                        transition: '0.3s'
-                    }}>
-                        <div style={{ color: 'var(--accent-red)', marginBottom: '20px' }}>
-                            {idx % 3 === 0 ? <Scissors size={40} /> : idx % 3 === 1 ? <Zap size={40} /> : <Film size={40} />}
-                        </div>
-                        <h3 style={{ marginBottom: '15px' }}>{service.title}</h3>
-                        <p style={{ color: '#aaa' }}>{service.description}</p>
-                    </div>
-                )) : (
-                    <p>Loading services...</p>
-                )}
-            </div>
-        </div>
-    );
+        {!loading && services.length === 0 && (
+          <p className="text-center text-muted">No services added yet.</p>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Services;

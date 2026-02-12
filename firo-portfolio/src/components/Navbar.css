@@ -1,80 +1,156 @@
 .navbar {
-    background-color: var(--nav-bg);
-    height: 80px;
-    display: flex;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--nav-bg);
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .nav-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .logo {
-    font-family: 'Oswald', sans-serif;
-    font-size: 1.8rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(1.25rem, 3vw, 1.6rem);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: 0.1em;
+}
+
+.logo:hover {
+  color: var(--text-primary);
+}
+
+.logo-icon {
+  flex-shrink: 0;
+  color: var(--accent-red);
+}
+
+.text-green-700 {
+  color: var(--accent-red);
 }
 
 .nav-links {
-    display: flex;
-    list-style: none;
-    gap: 30px;
+  display: flex;
+  list-style: none;
+  gap: clamp(1.25rem, 3vw, 2rem);
 }
 
 .nav-links a {
-    font-size: 1rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent-red);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
 }
 
 .nav-links a:hover {
-    color: var(--accent-red);
+  color: var(--accent-red);
 }
 
 .menu-icon {
-    display: none;
-    cursor: pointer;
+  display: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: white;
+  transition: color 0.2s;
 }
 
+.menu-icon:hover {
+  color: var(--accent-red);
+}
+
+/* Mobile Menu */
 @media (max-width: 768px) {
-    .menu-icon {
-        display: block;
-    }
+  .menu-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .nav-links {
-        position: absolute;
-        top: 80px;
-        left: -100%;
-        width: 100%;
-        height: calc(100vh - 80px);
-        background-color: black;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        transition: 0.5s ease;
-    }
+  .nav-links {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: calc(100vh - var(--header-height));
+    background: rgba(5, 5, 5, 0.98);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
+  }
 
-    .nav-links.active {
-        left: 0;
-    }
+  .nav-links.active {
+    transform: translateX(0);
+  }
 
-    .nav-links li {
-        margin: 20px 0;
-    }
+  .nav-links li {
+    margin: 0;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: navItemFade 0.4s ease forwards;
+  }
 
-    .nav-links a {
-        font-size: 1.5rem;
+  .nav-links.active li {
+    opacity: 1;
+    animation: navItemFade 0.4s ease forwards;
+  }
+
+  .nav-links.active li:nth-child(1) { animation-delay: 0.1s; }
+  .nav-links.active li:nth-child(2) { animation-delay: 0.15s; }
+  .nav-links.active li:nth-child(3) { animation-delay: 0.2s; }
+  .nav-links.active li:nth-child(4) { animation-delay: 0.25s; }
+  .nav-links.active li:nth-child(5) { animation-delay: 0.3s; }
+
+  @keyframes navItemFade {
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
+  }
+
+  .nav-links a {
+    font-size: 1.5rem;
+    padding: 1rem;
+    display: block;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav-links a {
+    font-size: 1.25rem;
+  }
 }
