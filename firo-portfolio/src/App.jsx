@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import './App.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import BackgroundAudio from './components/BackgroundAudio';
 import Home from './pages/Home';
 import About from './pages/About';
 import Services from './pages/Services';
@@ -22,6 +23,7 @@ function Layout({ children }) {
 
   return (
     <div className="app-container">
+      <BackgroundAudio />
       <Navbar />
       <main className="main-content">{children}</main>
       <Footer />
