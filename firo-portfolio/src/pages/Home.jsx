@@ -106,9 +106,9 @@ const Home = () => {
               </div>
               <div className="hero-profile-img">
                 <img
-                  src={heroData?.imageUrl}
+                  src={heroData?.imageUrl || "/photo_2026-01-28_08-24-33.jpg"}
                   onError={(e) => {
-                    e.target.src = "https://placehold.co/400x400/1a1a1a/666?text=FA";
+                    e.target.src = "/photo_2026-01-28_08-24-33.jpg";
                   }}
                   alt="Firaol Adane - Video Editor"
                 />
